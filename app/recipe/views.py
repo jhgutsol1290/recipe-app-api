@@ -25,7 +25,9 @@ class TagViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class IngredientViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class IngredientViewSet(viewsets.GenericViewSet,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin):
     """Manage ingredients in db"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -38,3 +40,10 @@ class IngredientViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         this can be done in queryset, but is recommended to be done here
         """
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    def perform_create(self, serializer):
+        """
+        Create a new ingredient with the user,
+        You override perform_create methos and pass the user from request
+        """
+        serializer.save(user=self.request.user)
